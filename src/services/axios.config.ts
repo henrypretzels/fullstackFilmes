@@ -1,9 +1,9 @@
 import axios from 'axios'
-import { authService } from './auth.service'
 import router from '@/router'
+import { useAuthStore } from '@/stores/authStore'
 
 const api = axios.create({
-  baseURL: 'http://localhost:8080',
+  baseURL: 'http://localhost:8080/api',
   headers: {
     'Content-Type': 'application/json',
     'Accept': 'application/json'
@@ -13,7 +13,8 @@ const api = axios.create({
 
 api.interceptors.request.use(
   (config) => {
-    const token = authService.getToken()
+    const authStore = useAuthStore()
+    const token = authStore.user?.token
     if (token) {
       config.headers.Authorization = `Bearer ${token}`
     }
@@ -31,7 +32,8 @@ api.interceptors.response.use(
     console.error('Response error:', error.response || error)
     
     if (error.response?.status === 401) {
-      authService.logout()
+      const authStore = useAuthStore()
+      authStore.logout()
       router.push('/login')
     }
     

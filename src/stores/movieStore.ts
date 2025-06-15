@@ -7,7 +7,7 @@ export const useMovieStore = defineStore('movie', () => {
   const movies = ref<Movie[]>([]);
   const currentMovie = ref<Movie | null>(null);
   const reviews = ref<MovieReview[]>([]);
-  const favorites = ref<string[]>([]);
+  // const favorites = ref<string[]>([]); // Commented out favorites state
   const loading = ref(false);
   const error = ref<string | null>(null);
 
@@ -81,36 +81,38 @@ export const useMovieStore = defineStore('movie', () => {
     }
   }
 
-  async function fetchFavorites() {
-    try {
-      favorites.value = await favoriteService.getFavorites();
-    } catch (err) {
-      error.value = 'Erro ao carregar favoritos';
-      console.error(err);
-    }
-  }
+  // --- Commented out favorites logic ---
+  // async function fetchFavorites() {
+  //   try {
+  //     favorites.value = await favoriteService.getFavorites();
+  //   } catch (err) {
+  //     error.value = 'Erro ao carregar favoritos';
+  //     console.error(err);
+  //   }
+  // }
 
-  async function toggleFavorite(filmeId: string) {
-    try {
-      const isFavorite = await favoriteService.checkFavorite(filmeId);
-      if (isFavorite) {
-        await favoriteService.removeFavorite(filmeId);
-        favorites.value = favorites.value.filter((id: string) => id !== filmeId);
-      } else {
-        await favoriteService.addFavorite(filmeId);
-        favorites.value.push(filmeId);
-      }
-    } catch (err) {
-      error.value = 'Erro ao atualizar favoritos';
-      console.error(err);
-    }
-  }
+  // async function toggleFavorite(filmeId: string) {
+  //   try {
+  //     const isFavorite = await favoriteService.checkFavorite(filmeId);
+  //     if (isFavorite) {
+  //       await favoriteService.removeFavorite(filmeId);
+  //       favorites.value = favorites.value.filter((id: string) => id !== filmeId);
+  //     } else {
+  //       await favoriteService.addFavorite(filmeId);
+  //       favorites.value.push(filmeId);
+  //     }
+  //   } catch (err) {
+  //     error.value = 'Erro ao atualizar favoritos';
+  //     console.error(err);
+  //   }
+  // }
+  // -------------------------------------
 
   return {
     movies,
     currentMovie,
     reviews,
-    favorites,
+    // favorites, // Commented out favorites state in return
     loading,
     error,
     filteredMovies,
@@ -120,7 +122,7 @@ export const useMovieStore = defineStore('movie', () => {
     filterByGenre,
     fetchMovieReviews,
     addReview,
-    fetchFavorites,
-    toggleFavorite,
+    // fetchFavorites, // Commented out favorites function in return
+    // toggleFavorite, // Commented out favorites function in return
   };
 }); 

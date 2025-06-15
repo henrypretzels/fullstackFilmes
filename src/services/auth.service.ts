@@ -1,100 +1,30 @@
 import api from './axios.config'
+import type { LoginRequest, RegisterRequest, AuthResponse, User } from '@/types/movie'; // Import types from movie.ts
 
-export interface LoginRequest {
-  email: string
-  password: string
-}
+// Removed local interface definitions: LoginRequest, RegisterRequest, AuthResponse, User
 
-export interface RegisterRequest {
-  nome: string
-  email: string
-  password: string
-}
-
-export interface User {
-  email: string
-  nome: string
-  isAdmin: boolean
-}
-
-export interface AuthResponse {
-  token: string
-  user: User
-}
-
-// Helper function to decode JWT
-function decodeJwt(token: string): any {
-  try {
-    const base64Url = token.split('.')[1]
-    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/')
-    const jsonPayload = decodeURIComponent(atob(base64).split('').map(c => {
-      return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)
-    }).join(''))
-    return JSON.parse(jsonPayload)
-  } catch (e) {
-    console.error('Error decoding JWT:', e)
-    return {}
-  }
-}
+// Removed Helper function to decode JWT - logic moved to authStore if needed
+// function decodeJwt(token: string): any { ... }
 
 export const authService = {
   async login(data: LoginRequest): Promise<AuthResponse> {
-    const response = await api.post('/api/auth/login', {
+    const response = await api.post<AuthResponse>('/auth/login', {
       email: data.email,
-      senha: data.password
-    })
-    const token = response.data
-    // Decode JWT to get user info
-    const userInfo = decodeJwt(token)
-    const user: User = {
-      email: userInfo.sub,
-      nome: userInfo.nome || '',
-      isAdmin: userInfo.isAdmin === 1
-    }
-    localStorage.setItem('token', token)
-    localStorage.setItem('user', JSON.stringify(user))
-    return { token, user }
+      senha: data.senha
+    });
+    return response.data; // Return AuthResponse directly
   },
 
   async register(data: RegisterRequest): Promise<AuthResponse> {
-    const response = await api.post('/api/auth/registrar', {
+    const response = await api.post<AuthResponse>('/auth/registrar', {
       nome: data.nome,
       email: data.email,
-      senha: data.password
-    })
-    const token = response.data
-    // Decode JWT to get user info
-    const userInfo = decodeJwt(token)
-    const user: User = {
-      email: userInfo.sub,
-      nome: userInfo.nome || '',
-      isAdmin: userInfo.isAdmin === 1
-    }
-    localStorage.setItem('token', token)
-    localStorage.setItem('user', JSON.stringify(user))
-    return { token, user }
+      senha: data.senha,
+      isAdmin: data.isAdmin
+    });
+    return response.data; // Return AuthResponse directly
   },
 
-  logout(): void {
-    localStorage.removeItem('token')
-    localStorage.removeItem('user')
-  },
-
-  getToken(): string | null {
-    return localStorage.getItem('token')
-  },
-
-  getUser(): User | null {
-    const user = localStorage.getItem('user')
-    return user ? JSON.parse(user) : null
-  },
-
-  isAuthenticated(): boolean {
-    return !!this.getToken()
-  },
-
-  isAdmin(): boolean {
-    const user = this.getUser()
-    return user?.isAdmin || false
-  }
-} 
+  // Removed logout, getToken, getUser, isAuthenticated, isAdmin methods
+  // These are now handled by useAuthStore
+}; 
