@@ -1,5 +1,5 @@
 <template>
-  <div class="home">
+  <div class="genero-view">
     <div v-if="loading" class="loading">
       <div class="spinner"></div>
     </div>
@@ -7,14 +7,16 @@
       {{ error }}
     </div>
     <div v-else>
-      <h1 class="titulo">Gêneros</h1>
+      <h1 class="titulo">{{ genero }}</h1>
       <div class="filmes-grid">
-        <div v-for="genero in generos" :key="genero.id" class="filme-card">
-          <router-link :to="{ name: 'genero', params: { genero: genero.nome }}">
-            <div class="genero-info">
-              <h3>{{ genero.nome }}</h3>
+        <div v-for="filme in filmes" :key="filme.id" class="filme-card">
+          <router-link :to="{ name: 'filme', params: { id: filme.id }}">
+            <img :src="filme.poster" :alt="filme.titulo">
+            <div class="filme-info">
+              <h3>{{ filme.titulo }}</h3>
               <div class="filme-meta">
-                <span>{{ genero.quantidade }} filmes</span>
+                <span class="ano">{{ filme.ano }}</span>
+                <span class="duracao">{{ filme.duracao }} min</span>
               </div>
             </div>
           </router-link>
@@ -26,18 +28,21 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { filmesService } from '../services/filmes.service'
-import type { Genero } from '../services/filmes.service'
+import { useRoute } from 'vue-router'
+import { getFilmesPorGenero } from '../services/filmeService'
+import type { Filme } from '../types/filme'
 
-const generos = ref<Genero[]>([])
+const route = useRoute()
+const genero = ref(route.params.genero as string)
+const filmes = ref<Filme[]>([])
 const loading = ref(true)
 const error = ref<string | null>(null)
 
 onMounted(async () => {
   try {
-    generos.value = await filmesService.listarGeneros()
+    filmes.value = await getFilmesPorGenero(genero.value)
   } catch (err) {
-    error.value = 'Erro ao carregar gêneros'
+    error.value = 'Erro ao carregar filmes do gênero'
     console.error(err)
   } finally {
     loading.value = false
@@ -46,7 +51,7 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-.home {
+.genero-view {
   max-width: 1200px;
   margin: 0 auto;
   padding: 2rem;
@@ -69,6 +74,7 @@ onMounted(async () => {
   font-size: 2rem;
   margin-bottom: 2rem;
   color: var(--text-color);
+  text-transform: capitalize;
 }
 
 .filmes-grid {
@@ -83,10 +89,6 @@ onMounted(async () => {
   overflow: hidden;
   transition: transform 0.2s;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  height: 150px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
 .filme-card:hover {
@@ -96,23 +98,22 @@ onMounted(async () => {
 .filme-card a {
   text-decoration: none;
   color: inherit;
+}
+
+.filme-card img {
   width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  height: 300px;
+  object-fit: cover;
 }
 
-.genero-info {
+.filme-info {
   padding: 1rem;
-  text-align: center;
 }
 
-.genero-info h3 {
+.filme-info h3 {
   margin: 0 0 0.5rem;
   font-size: 1.1rem;
   color: var(--text-color);
-  text-transform: capitalize;
 }
 
 .filme-meta {
@@ -120,7 +121,6 @@ onMounted(async () => {
   gap: 1rem;
   font-size: 0.9rem;
   color: var(--text-secondary);
-  justify-content: center;
 }
 
 @media (max-width: 768px) {
@@ -128,5 +128,9 @@ onMounted(async () => {
     grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
     gap: 1rem;
   }
+
+  .filme-card img {
+    height: 225px;
+  }
 }
-</style>
+</style> 

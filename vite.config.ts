@@ -17,4 +17,7 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url))
     },
   },
+  define: {
+    'process.env.VITE_API_URL': JSON.stringify('http://localhost:8080')
+  }
 })
