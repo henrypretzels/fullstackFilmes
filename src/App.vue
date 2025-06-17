@@ -37,17 +37,19 @@ function handleLogout() {
     </main>
 
     <footer class="footer">
-      <p>&copy; 2024 Catálogo de Filmes. Todos os direitos reservados.</p>
+      <p>&copy; 2025 Catálogo de Filmes. Todos os direitos reservados.</p>
     </footer>
   </div>
 </template>
 
 <style>
 :root {
-  --primary-color: #4CAF50;
-  --text-color: #333;
-  --background-color: #f5f5f5;
+  --primary-color: #e53935;
+  --text-color: #fff;
+  --background-color: #181818;
   --header-height: 64px;
+  --footer-background: #232323;
+  --footer-text: #bbb;
 }
 
 * {
@@ -68,10 +70,12 @@ body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  background: var(--background-color);
 }
 
 .header {
-  background: white;
+  background: var(--primary-color);
+  color: var(--text-color);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   position: fixed;
   top: 0;
@@ -93,7 +97,7 @@ body {
 .logo {
   font-size: 1.5rem;
   font-weight: bold;
-  color: var(--primary-color);
+  color: var(--text-color);
   text-decoration: none;
 }
 
@@ -111,7 +115,7 @@ body {
 }
 
 .nav-link:hover {
-  color: var(--primary-color);
+  color: #ffd6d6;
 }
 
 .logout-btn {
@@ -125,20 +129,22 @@ body {
 }
 
 .logout-btn:hover {
-  color: var(--primary-color);
+  color: #ffd6d6;
 }
 
 .main {
   flex: 1;
   margin-top: var(--header-height);
   padding: 20px;
+  background: var(--background-color);
+  color: var(--text-color);
 }
 
 .footer {
-  background: white;
+  background: var(--footer-background);
   padding: 20px;
   text-align: center;
-  color: #666;
+  color: var(--footer-text);
   margin-top: auto;
 }
 
