@@ -1,0 +1,26 @@
+@import './layout.css';
+@import './cards.css';
+
+/* Global styles */
+:root {
+  --primary-color: #c0392b;      /* Red header background */
+  --secondary-color: #f39c12;    /* Orange search button */
+  --secondary-hover: #e67e22;    /* Darker orange for hover */
+  --background-color: #1a1a1a;   /* Dark background */
+  --card-background: #333;       /* Darker card background */
+  --text-color: #fff;           /* White text */
+  --text-secondary: #bbb;       /* Light gray for secondary text */
+  --favorite-color: #ff4d4d;    /* Red for favorite button */
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: sans-serif;
+  background-color: var(--background-color);
+  color: var(--text-color);
+} 
