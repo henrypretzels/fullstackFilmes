@@ -22,7 +22,7 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
     "forceConsistentCasingInFileNames": true,
-    "types": ["node", "vite/client", "vue", "vue-router"],
+    "types": ["node", "vite/client", "vue-router"],
     "skipLibCheck": true,
     "allowJs": true,
     "esModuleInterop": true

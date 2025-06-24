@@ -35,15 +35,15 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .csrf(csrf -> csrf.disable())
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+            .csrf(csrf -> csrf.disable())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/auth/**").permitAll()
-                .requestMatchers("/api/filmes/**").permitAll()
-                .requestMatchers("/api/avaliacoes/{filmeId}").permitAll()
-                .requestMatchers("/api/avaliacoes/**").authenticated()
-                .requestMatchers("/api/favoritos/**").authenticated()
+                .requestMatchers(
+                    "/api/auth/**",
+                    "/api/filmes/**",
+                    "/api/avaliacoes/{filmeId}"
+                ).permitAll()
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 .anyRequest().authenticated()
             )

@@ -41,9 +41,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import { useRouter } from 'vue-router';
-import { useAuthStore } from '@/stores/authStore';
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { useAuthStore } from '@/stores/authStore'
 
 const router = useRouter();
 const store = useAuthStore();
@@ -144,4 +144,6 @@ button:disabled {
 .register-link a:hover {
   text-decoration: underline;
 }
-</style> 
+</style>
+
+

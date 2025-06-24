@@ -20,7 +20,7 @@ public class Usuario {
     @NotBlank
     private String senha;
 
-    private int isAdmin = 0; // 0 = usuário normal, 1 = administrador
+    private boolean isAdmin = false; // false = usuário normal, true = administrador
 
     // Getters e Setters
     public String getId() {
@@ -55,11 +55,11 @@ public class Usuario {
         this.senha = senha;
     }
 
-    public int getIsAdmin() {
+    public boolean isAdmin() {
         return isAdmin;
     }
 
-    public void setIsAdmin(int isAdmin) {
+    public void setAdmin(boolean isAdmin) {
         this.isAdmin = isAdmin;
     }
 } 
