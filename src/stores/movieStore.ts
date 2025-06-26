@@ -4,10 +4,11 @@ import type { Movie, MovieReview } from '@/types/movie';
 import { movieService, reviewService, favoriteService } from '@/services/api';
 
 export const useMovieStore = defineStore('movie', () => {
+  console.log('🍍 movie store initialized');
   const movies = ref<Movie[]>([]);
   const currentMovie = ref<Movie | null>(null);
   const reviews = ref<MovieReview[]>([]);
-  // const favorites = ref<string[]>([]); // Commented out favorites state
+  const favorites = ref<string[]>([]);
   const loading = ref(false);
   const error = ref<string | null>(null);
 
@@ -81,38 +82,70 @@ export const useMovieStore = defineStore('movie', () => {
     }
   }
 
-  // --- Commented out favorites logic ---
-  // async function fetchFavorites() {
-  //   try {
-  //     favorites.value = await favoriteService.getFavorites();
-  //   } catch (err) {
-  //     error.value = 'Erro ao carregar favoritos';
-  //     console.error(err);
-  //   }
-  // }
+  async function fetchFavorites() {
+    try {
+      console.log('Fetching favorites...');
+      const result = await favoriteService.getFavorites();
+      console.log('Favorites result:', result);
+      // Use a Set to remove duplicates from the backend response
+      favorites.value = Array.from(new Set(result));
+      console.log('Favorites updated in store (deduplicated):', favorites.value);
+    } catch (err: any) {
+      console.error('Error fetching favorites:', err.response || err);
+      if (err?.response?.status === 401 || err?.response?.status === 403) {
+        favorites.value = [];
+      } else {
+        error.value = 'Erro ao carregar favoritos';
+      }
+    }
+  }
 
-  // async function toggleFavorite(filmeId: string) {
-  //   try {
-  //     const isFavorite = await favoriteService.checkFavorite(filmeId);
-  //     if (isFavorite) {
-  //       await favoriteService.removeFavorite(filmeId);
-  //       favorites.value = favorites.value.filter((id: string) => id !== filmeId);
-  //     } else {
-  //       await favoriteService.addFavorite(filmeId);
-  //       favorites.value.push(filmeId);
-  //     }
-  //   } catch (err) {
-  //     error.value = 'Erro ao atualizar favoritos';
-  //     console.error(err);
-  //   }
-  // }
-  // -------------------------------------
+  async function toggleFavorite(filmeId: string) {
+    try {
+      const isCurrentlyFavorite = favorites.value.includes(filmeId);
+      console.log('Toggle favorite:', filmeId, 'Currently favorite:', isCurrentlyFavorite);
+      
+      if (isCurrentlyFavorite) {
+        console.log('Removing favorite...');
+        await favoriteService.removeFavorite(filmeId);
+        // Create new array reference for reactivity
+        favorites.value = favorites.value.filter((id: string) => id !== filmeId);
+        console.log('Favorite removed successfully. New favorites:', favorites.value);
+      } else {
+        console.log('Adding favorite...');
+        await favoriteService.addFavorite(filmeId);
+        // Create new array reference for reactivity
+        favorites.value = [...favorites.value, filmeId];
+        console.log('Favorite added successfully. New favorites:', favorites.value);
+      }
+    } catch (err: any) {
+      console.log('Error in toggleFavorite:', err);
+      // Log the detailed error response from Axios
+      console.log('Error response:', err.response);
+      console.log('Error message:', err.response?.data?.message || err.message);
+      
+      // Handle specific error for already favorited movie
+      if (err?.response?.data?.message?.includes('já está nos favoritos')) {
+        alert('Este filme já está nos seus favoritos!');
+        return;
+      }
+      // Handle other errors
+      error.value = 'Erro ao atualizar favoritos';
+      console.error(err);
+    }
+  }
+
+  function clearFavorites() {
+    console.log('Clearing favorites...');
+    favorites.value = [];
+    console.log('Favorites cleared');
+  }
 
   return {
     movies,
     currentMovie,
     reviews,
-    // favorites, // Commented out favorites state in return
+    favorites,
     loading,
     error,
     filteredMovies,
@@ -122,7 +155,8 @@ export const useMovieStore = defineStore('movie', () => {
     filterByGenre,
     fetchMovieReviews,
     addReview,
-    // fetchFavorites, // Commented out favorites function in return
-    // toggleFavorite, // Commented out favorites function in return
+    fetchFavorites,
+    toggleFavorite,
+    clearFavorites,
   };
 }); 

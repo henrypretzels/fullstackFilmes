@@ -40,26 +40,43 @@
 <script setup lang="ts">
 import { ref, onMounted, watch } from 'vue';
 import { useMovieStore } from '@/stores/movieStore';
+import { useAuthStore } from '@/stores/authStore';
+import { storeToRefs } from 'pinia';
 import MovieCard from './MovieCard.vue';
 import type { Movie } from '@/types/movie';
 
 const store = useMovieStore();
+const authStore = useAuthStore();
+const { user, isAuthenticated } = storeToRefs(authStore);
 const searchQuery = ref('');
 const selectedGenre = ref('');
 const genres = ref<string[]>([]);
 
 onMounted(async () => {
+  console.log('MovieList mounted. authStore.user:', user.value, 'isAuthenticated:', isAuthenticated.value);
   try {
     await store.fetchMovies();
     extractGenres();
-    // Only fetch favorites if movies were loaded successfully
-    if (!store.error) {
-      await store.fetchFavorites();
-    }
   } catch (err) {
     console.error('Error in MovieList setup:', err);
   }
 });
+
+watch(
+  () => isAuthenticated.value,
+  async (isAuth: boolean) => {
+    console.log('Auth state changed:', isAuth, 'authStore.user:', user.value);
+    if (isAuth) {
+      console.log('Fetching favorites...');
+      await store.fetchFavorites();
+      console.log('Favorites fetched:', store.favorites);
+    } else {
+      console.log('Clearing favorites...');
+      store.clearFavorites();
+    }
+  },
+  { immediate: true }
+);
 
 function extractGenres() {
   const genreSet = new Set<string>();

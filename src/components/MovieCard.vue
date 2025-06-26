@@ -11,8 +11,7 @@
       </div>
       <p class="sinopse">{{ movie.sinopse }}</p>
       <button 
-        @click="toggleFavorite" 
-        :disabled="isLoading"
+        @click="toggleFavorite"
         :class="['favorite-btn', { 'is-favorite': isFavorite }]"
       >
         {{ isFavorite ? '❤️' : '🤍' }}
@@ -22,40 +21,33 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { computed } from 'vue';
+import { useRouter } from 'vue-router';
 import type { Movie } from '@/types/movie';
-import { favoriteService } from '@/services/api';
+import { useMovieStore } from '@/stores/movieStore';
+import { useAuthStore } from '@/stores/authStore';
 
 const props = defineProps<{
   movie: Movie;
 }>();
 
-const isFavorite = ref(false);
-const isLoading = ref(false);
+const movieStore = useMovieStore();
+const authStore = useAuthStore();
+const router = useRouter();
 
-const toggleFavorite = async () => {
-  try {
-    isLoading.value = true;
-    if (isFavorite.value) {
-      await favoriteService.removeFavorite(props.movie.id);
-    } else {
-      await favoriteService.addFavorite(props.movie.id);
-    }
-    isFavorite.value = !isFavorite.value;
-  } catch (error) {
-    console.error('Error toggling favorite:', error);
-  } finally {
-    isLoading.value = false;
-  }
-};
-
-onMounted(async () => {
-  try {
-    isFavorite.value = await favoriteService.checkFavorite(props.movie.id);
-  } catch (error) {
-    console.error('Error checking favorite status:', error);
-  }
+const isFavorite = computed(() => {
+  const result = movieStore.favorites.includes(props.movie.id);
+  console.log('MovieCard:', props.movie.titulo, 'movieStore.favorites:', movieStore.favorites, 'isFavorite:', result);
+  return result;
 });
+
+const toggleFavorite = () => {
+  if (!authStore.isAuthenticated) {
+    router.push('/login');
+    return;
+  }
+  movieStore.toggleFavorite(props.movie.id);
+};
 </script>
 
 <style scoped>

@@ -13,12 +13,21 @@ const api = axios.create({
 
 api.interceptors.request.use(
   (config) => {
-    const authStore = useAuthStore()
-    const token = authStore.user?.token
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`
+    // Always read the token from localStorage to ensure it's up-to-date
+    const userStr = localStorage.getItem('user');
+    let token = null;
+    if (userStr) {
+      try {
+        token = JSON.parse(userStr).token;
+      } catch (e) {
+        token = null;
+      }
     }
-    return config
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    console.log('Axios request token:', token, 'URL:', config.url);
+    return config;
   },
   (error) => {
     console.error('Request error:', error)

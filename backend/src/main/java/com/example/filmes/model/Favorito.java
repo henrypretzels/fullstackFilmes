@@ -1,9 +1,11 @@
 package com.example.filmes.model;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "favoritos")
+@CompoundIndex(name = "user_movie_unique_idx", def = "{'userId' : 1, 'filmeId': 1}", unique = true)
 public class Favorito {
     @Id
     private String id;

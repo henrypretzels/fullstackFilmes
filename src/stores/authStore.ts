@@ -24,10 +24,13 @@ export const useAuthStore = defineStore('auth', () => {
   const isAuthenticated = computed(() => !!user.value?.token);
 
   function setUser(userData: User | null, authToken: string | null) {
-    user.value = userData;
     if (userData && authToken) {
-      localStorage.setItem('user', JSON.stringify({ ...userData, token: authToken })); // Store token with user for convenience
+      user.value = JSON.parse(JSON.stringify({ ...userData, token: authToken }));
+      console.log('Set user.value:', user.value);
+      console.log('isAuthenticated:', isAuthenticated.value);
+      localStorage.setItem('user', JSON.stringify({ ...userData, token: authToken }));
     } else {
+      user.value = null;
       localStorage.removeItem('user');
     }
   }
@@ -43,6 +46,7 @@ export const useAuthStore = defineStore('auth', () => {
         nome: response.user.nome,
         role: response.user.role,
       }, response.token);
+      // window.location.reload(); // Force a full reload to sync state
     } catch (err: any) {
       error.value = err.response?.data?.message || 'Erro ao fazer login';
       console.error(err);
