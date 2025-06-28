@@ -66,9 +66,14 @@ export const useMovieStore = defineStore('movie', () => {
   async function fetchMovieReviews(filmeId: string) {
     try {
       reviews.value = await reviewService.getMovieReviews(filmeId);
-    } catch (err) {
+    } catch (err: any) {
+      // Handle 404 as "no reviews" rather than an error
+      if (err?.response?.status === 404) {
+        reviews.value = [];
+      } else {
       error.value = 'Erro ao carregar avaliações';
-      console.error(err);
+        console.error('Error fetching movie reviews:', err);
+      }
     }
   }
 

@@ -47,6 +47,14 @@ export const authService = {
   },
 };
 
+export interface CreateMovieRequest {
+  titulo: string;
+  imagemUrl: string;
+  ano: number;
+  generos: string[];
+  sinopse: string;
+}
+
 export const movieService = {
   async getAllMovies(): Promise<Movie[]> {
     try {
@@ -87,6 +95,16 @@ export const movieService = {
       throw new Error('Erro ao carregar filmes por gênero');
     }
   },
+
+  async createMovie(movieData: CreateMovieRequest): Promise<Movie> {
+    try {
+      const response = await api.post<Movie>('/filmes', movieData);
+      return response.data;
+    } catch (error) {
+      console.error('Error creating movie:', error);
+      throw new Error('Erro ao criar filme');
+    }
+  },
 };
 
 export const reviewService = {
@@ -94,9 +112,10 @@ export const reviewService = {
     try {
       const response = await api.get<MovieReview[]>(`/avaliacoes/${filmeId}`);
       return response.data;
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error fetching reviews:', error);
-      throw new Error('Erro ao carregar avaliações');
+      // Preserve the original error so the store can handle 404 properly
+      throw error;
     }
   },
 

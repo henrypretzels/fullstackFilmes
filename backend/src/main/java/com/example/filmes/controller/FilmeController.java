@@ -8,6 +8,10 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
+import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.Collections;
 
 @RestController
 @RequestMapping("/api/filmes")
@@ -40,6 +44,20 @@ public class FilmeController {
     @GetMapping("/genero")
     public ResponseEntity<List<Filme>> filtrarPorGenero(@RequestParam String genero) {
         return ResponseEntity.ok(filmeService.filtrarPorGenero(genero));
+    }
+
+    @GetMapping("/generos")
+    public ResponseEntity<List<String>> listarGeneros() {
+        List<Filme> filmes = filmeService.listarTodos();
+        Set<String> generos = new HashSet<>();
+        for (Filme filme : filmes) {
+            if (filme.getGeneros() != null) {
+                generos.addAll(filme.getGeneros());
+            }
+        }
+        List<String> listaGeneros = new ArrayList<>(generos);
+        Collections.sort(listaGeneros);
+        return ResponseEntity.ok(listaGeneros);
     }
 
     @PostMapping

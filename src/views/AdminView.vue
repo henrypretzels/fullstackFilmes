@@ -17,21 +17,21 @@
         </div>
 
         <div class="form-group">
-          <label for="imagem">URL da Imagem:</label>
+          <label for="imagemUrl">URL da Imagem:</label>
           <input
             type="url"
-            id="imagem"
-            v-model="form.imagem"
+            id="imagemUrl"
+            v-model="form.imagemUrl"
             required
             placeholder="URL do poster do filme"
           />
         </div>
 
         <div class="form-group">
-          <label for="descricao">Descrição:</label>
+          <label for="sinopse">Sinopse:</label>
           <textarea
-            id="descricao"
-            v-model="form.descricao"
+            id="sinopse"
+            v-model="form.sinopse"
             required
             placeholder="Sinopse do filme"
             rows="4"
@@ -39,11 +39,11 @@
         </div>
 
         <div class="form-group">
-          <label for="anoLancamento">Ano de Lançamento:</label>
+          <label for="ano">Ano de Lançamento:</label>
           <input
             type="number"
-            id="anoLancamento"
-            v-model="form.anoLancamento"
+            id="ano"
+            v-model="form.ano"
             required
             min="1900"
             max="2024"
@@ -51,36 +51,27 @@
         </div>
 
         <div class="form-group">
-          <label for="genero">Gênero:</label>
-          <input
-            type="text"
-            id="genero"
-            v-model="form.genero"
-            required
-            placeholder="Gênero do filme"
-          />
-        </div>
-
-        <div class="form-group">
-          <label for="diretor">Diretor:</label>
-          <input
-            type="text"
-            id="diretor"
-            v-model="form.diretor"
-            required
-            placeholder="Nome do diretor"
-          />
-        </div>
-
-        <div class="form-group">
-          <label for="atores">Atores (separados por vírgula):</label>
-          <input
-            type="text"
-            id="atores"
-            v-model="form.atores"
-            required
-            placeholder="Nome dos atores"
-          />
+          <label for="generos">Gêneros:</label>
+          <div class="multi-select">
+            <div class="selected-genres">
+              <span v-for="(genre, idx) in form.generos" :key="genre" class="genre-chip">
+                {{ genre }}
+                <button type="button" @click="removeGenre(idx)">×</button>
+              </span>
+            </div>
+            <input
+              type="text"
+              v-model="genreInput"
+              @keydown.enter.prevent="addGenre"
+              @keydown.tab.prevent="addGenre"
+              list="genre-list"
+              placeholder="Adicionar ou selecionar gênero"
+            />
+            <datalist id="genre-list">
+              <option v-for="genre in availableGenres" :key="genre" :value="genre" />
+            </datalist>
+            <button type="button" @click="addGenre" class="add-genre-btn">Adicionar</button>
+          </div>
         </div>
 
         <div v-if="error" class="error-message">
@@ -96,48 +87,81 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from 'vue'
+import { ref, reactive, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/authStore'
+import { useMovieStore } from '@/stores/movieStore'
+import { movieService, type CreateMovieRequest } from '@/services/api'
+import type { Movie } from '@/types/movie'
 
 const router = useRouter()
 const authStore = useAuthStore()
+const movieStore = useMovieStore()
 const loading = ref(false)
 const error = ref<string>('')
 
 interface MovieForm {
   titulo: string
-  imagem: string
-  descricao: string
-  anoLancamento: number
-  genero: string
-  diretor: string
-  atores: string
+  imagemUrl: string
+  sinopse: string
+  ano: number
+  generos: string[]
 }
 
 const form = reactive<MovieForm>({
   titulo: '',
-  imagem: '',
-  descricao: '',
-  anoLancamento: new Date().getFullYear(),
-  genero: '',
-  diretor: '',
-  atores: ''
+  imagemUrl: '',
+  sinopse: '',
+  ano: new Date().getFullYear(),
+  generos: []
 })
+
+// Extract available genres from all movies in the store
+const availableGenres = computed(() => {
+  const genreSet = new Set<string>()
+  movieStore.movies.forEach((movie: Movie) => {
+    movie.generos.forEach((g: string) => genreSet.add(g))
+  })
+  return Array.from(genreSet).sort()
+})
+const genreInput = ref('')
+
+function addGenre() {
+  const genre = genreInput.value.trim()
+  if (genre && !form.generos.includes(genre)) {
+    form.generos.push(genre)
+  }
+  genreInput.value = ''
+}
+
+function removeGenre(idx: number) {
+  form.generos.splice(idx, 1)
+}
 
 async function handleSubmit() {
   try {
     loading.value = true
     error.value = ''
 
-    const movieData = {
-      ...form,
-      atores: form.atores.split(',').map((ator: string) => ator.trim()),
-      notaMedia: 0
+    const movieData: CreateMovieRequest = {
+      titulo: form.titulo,
+      imagemUrl: form.imagemUrl,
+      ano: form.ano,
+      generos: form.generos,
+      sinopse: form.sinopse
     }
 
-    // TODO: Implement movie creation API call
-    console.log('Movie data:', movieData)
+    await movieService.createMovie(movieData)
+    
+    // Refresh the movie list to include the new movie
+    await movieStore.fetchMovies()
+    
+    // Reset form
+    form.titulo = ''
+    form.imagemUrl = ''
+    form.sinopse = ''
+    form.ano = new Date().getFullYear()
+    form.generos = []
     
     router.push('/')
   } catch (err: any) {
@@ -231,6 +255,48 @@ textarea {
   border-radius: 4px;
   margin-top: 1rem;
   text-align: center;
+}
+
+.multi-select {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+}
+.selected-genres {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+.genre-chip {
+  background: #e0e0e0;
+  border-radius: 12px;
+  padding: 0.2rem 0.7rem 0.2rem 0.7rem;
+  display: flex;
+  align-items: center;
+  font-size: 0.95rem;
+  color: #444;
+}
+.genre-chip button {
+  background: none;
+  border: none;
+  color: #888;
+  margin-left: 0.3rem;
+  cursor: pointer;
+  font-size: 1.1rem;
+}
+.add-genre-btn {
+  padding: 0.3rem 0.8rem;
+  border: none;
+  background: #1976d2;
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.95rem;
+}
+.add-genre-btn:hover {
+  background: #125ea2;
 }
 
 @media (max-width: 480px) {

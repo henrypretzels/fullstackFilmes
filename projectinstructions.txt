@@ -1,0 +1,26 @@
+Objetivo
+Criar uma aplicação web funcional com integração entre frontend e backend, permitindo ao usuário interagir com um catálogo
+de filmes.
+Funcionalidades Obrigatórias
+Frontend
+1. Listagem de filmes em cards com imagem, título e nota média.
+2. Página de detalhes do filme com sinopse, gênero(s), ano de lançamento e lista de avaliações.
+3. Busca por título (campo de pesquisa no topo da página).
+4. Filtro por gênero (ex: ação, comédia, drama).
+5. Marcar/Desmarcar filme como favorito (ex: clicar em um ícone de coração).
+6. Visualizar lista de favoritos em uma aba ou página separada.
+7. Avaliação de filmes com nota de 1 a 5 estrelas.
+8. Cadastro de nova avaliação com nome do autor e comentário.
+9. Interface responsiva e organizada com uso de componentes reutilizáveis.
+10. Consumo da API do backend com requisições HTTP (GET, POST, etc).
+Backend
+1. API para filmes com endpoints de listagem, detalhes e filtro por gênero.
+2. API para avaliações, permitindo consultar e registrar avaliações por filme.
+3. API para marcar/desmarcar favoritos, associando filmes a usuários fictícios (por ID).
+4. Banco de dados relacional (H2, PostgreSQL ou outro à sua escolha).
+5. Documentação dos endpoints com Swagger ou README estruturado.
+Observações
+● O projeto pode usar dados estáticos inicialmente, mas a persistência no banco será um diferencial.
+● Integrações como login, JWT, autenticação, cadastro de usuários e upload de imagem são consideradas extras (não
+obrigatórios) e contam pontos para quem quiser se desafiar.
+● É permitido usar bibliotecas prontas de UI (como Vuetify ou Angular Material) para facilitar a construção da interface.

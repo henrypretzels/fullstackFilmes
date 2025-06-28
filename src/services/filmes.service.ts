@@ -11,6 +11,14 @@ export interface Filme {
   sinopse: string
 }
 
+export interface CriarFilmeRequest {
+  titulo: string
+  imagemUrl: string
+  ano: number
+  generos: string[]
+  sinopse: string
+}
+
 export interface Genero {
   id: number
   nome: string
@@ -33,8 +41,8 @@ export const filmesService = {
     return response.data
   },
 
-  async listarGeneros(): Promise<Genero[]> {
-    const response = await api.get('/filmes/generos')
+  async criarFilme(filmeData: CriarFilmeRequest): Promise<Filme> {
+    const response = await api.post('/filmes', filmeData)
     return response.data
   }
 } 
