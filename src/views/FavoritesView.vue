@@ -53,7 +53,8 @@ onMounted(async () => {
 h1 {
   margin-bottom: 32px;
   font-size: 2rem;
-  color: #333;
+  color: #fff;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.18);
 }
 
 .loading,

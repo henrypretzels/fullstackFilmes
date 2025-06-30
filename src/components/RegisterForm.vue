@@ -35,16 +35,6 @@
         />
       </div>
 
-      <div class="form-group">
-        <label class="checkbox-label">
-          <input
-            type="checkbox"
-            v-model="isAdmin"
-          />
-          É administrador?
-        </label>
-      </div>
-
       <div v-if="store.error" class="error">
         {{ store.error }}
       </div>
@@ -72,15 +62,13 @@ const store = useAuthStore();
 const name = ref('');
 const email = ref('');
 const password = ref('');
-const isAdmin = ref(false);
 
 async function handleSubmit() {
   try {
     await store.register({
       nome: name.value,
       email: email.value,
-      senha: password.value,
-      isAdmin: isAdmin.value
+      senha: password.value
     });
     router.push('/');
   } catch (err) {

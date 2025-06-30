@@ -1,6 +1,6 @@
 <template>
   <div class="admin-container">
-    <h1>Painel Administrativo</h1>
+    <h1 class="admin-title">Painel Administrativo</h1>
     
     <div class="admin-section">
       <h2>Adicionar Novo Filme</h2>
@@ -58,20 +58,20 @@
                 {{ genre }}
                 <button type="button" @click="removeGenre(idx)">×</button>
               </span>
-            </div>
-            <input
-              type="text"
+        </div>
+          <input
+            type="text"
               v-model="genreInput"
               @keydown.enter.prevent="addGenre"
               @keydown.tab.prevent="addGenre"
               list="genre-list"
               placeholder="Adicionar ou selecionar gênero"
-            />
+          />
             <datalist id="genre-list">
               <option v-for="genre in availableGenres" :key="genre" :value="genre" />
             </datalist>
             <button type="button" @click="addGenre" class="add-genre-btn">Adicionar</button>
-          </div>
+        </div>
         </div>
 
         <div v-if="error" class="error-message">
@@ -174,33 +174,44 @@ async function handleSubmit() {
 
 <style scoped>
 .admin-container {
-  max-width: 800px;
+  max-width: 500px;
   margin: 80px auto 40px;
   padding: 0 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-h1 {
-  color: #333;
+.admin-title {
+  color: #fff;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.18);
   margin-bottom: 2rem;
   text-align: center;
 }
 
 .admin-section {
   background: white;
-  padding: 2rem;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 2.5rem 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  width: 100%;
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 h2 {
   color: #444;
   margin-bottom: 1.5rem;
+  text-align: center;
 }
 
 .admin-form {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 1.2rem;
+  width: 100%;
 }
 
 .form-group {
@@ -220,6 +231,13 @@ textarea {
   border: 1px solid #ddd;
   border-radius: 4px;
   font-size: 1rem;
+  background: #fafafa;
+}
+
+input:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--primary-color);
 }
 
 textarea {
@@ -230,17 +248,17 @@ textarea {
 .submit-button {
   background-color: var(--primary-color);
   color: white;
-  padding: 0.75rem;
+  padding: 0.9rem;
   border: none;
   border-radius: 4px;
-  font-size: 1rem;
+  font-size: 1.1rem;
   cursor: pointer;
   transition: background-color 0.2s;
   margin-top: 1rem;
 }
 
 .submit-button:hover {
-  background-color: #3d8b40;
+  background-color: #c62828;
 }
 
 .submit-button:disabled {
@@ -299,13 +317,25 @@ textarea {
   background: #125ea2;
 }
 
-@media (max-width: 480px) {
+@media (max-width: 600px) {
   .admin-container {
-    margin-top: 60px;
+    margin-top: 40px;
+    padding: 0 8px;
   }
-
   .admin-section {
-    padding: 1.5rem;
+    padding: 1.2rem 0.5rem;
+    max-width: 100%;
   }
+}
+
+.section-title {
+  color: inherit;
+  background: none;
+  border-radius: 0;
+  padding: 0;
+  margin: 0 0 1.5rem 0;
+  font-size: 1.4rem;
+  font-weight: 600;
+  box-shadow: none;
 }
 </style> 

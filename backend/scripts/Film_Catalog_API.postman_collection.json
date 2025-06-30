@@ -1,0 +1,518 @@
+{
+  "info": {
+    "name": "Film Catalog API",
+    "description": "Complete API collection for the Film Catalog full-stack application",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8080/api",
+      "type": "string"
+    },
+    {
+      "key": "jwt_token",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{jwt_token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "item": [
+    {
+      "name": "🔐 Authentication",
+      "item": [
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@filmes.com\",\n  \"senha\": \"admin123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "login"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    pm.collectionVariables.set('jwt_token', response.token);",
+                  "    console.log('JWT Token saved:', response.token);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Novo Usuário\",\n  \"email\": \"novo@filmes.com\",\n  \"senha\": \"senha123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/register",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "register"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "🎬 Movies",
+      "item": [
+        {
+          "name": "Get All Movies",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/filmes",
+              "host": ["{{base_url}}"],
+              "path": ["filmes"]
+            }
+          }
+        },
+        {
+          "name": "Get Movie by ID",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/filmes/{movie_id}",
+              "host": ["{{base_url}}"],
+              "path": ["filmes", "{movie_id}"]
+            }
+          }
+        },
+        {
+          "name": "Search Movies by Title",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/filmes/buscar?titulo=matrix",
+              "host": ["{{base_url}}"],
+              "path": ["filmes", "buscar"],
+              "query": [
+                {
+                  "key": "titulo",
+                  "value": "matrix"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Filter Movies by Genre",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/filmes/genero?genero=Drama",
+              "host": ["{{base_url}}"],
+              "path": ["filmes", "genero"],
+              "query": [
+                {
+                  "key": "genero",
+                  "value": "Drama"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Add New Movie (Admin)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"titulo\": \"Novo Filme\",\n  \"imagemUrl\": \"https://exemplo.com/novo-filme.jpg\",\n  \"ano\": 2024,\n  \"generos\": [\"Ação\", \"Aventura\"],\n  \"sinopse\": \"Sinopse do novo filme...\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/filmes",
+              "host": ["{{base_url}}"],
+              "path": ["filmes"]
+            }
+          }
+        },
+        {
+          "name": "Update Movie (Admin)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"titulo\": \"Título Atualizado\",\n  \"imagemUrl\": \"https://exemplo.com/atualizado.jpg\",\n  \"ano\": 2024,\n  \"generos\": [\"Drama\", \"Suspense\"],\n  \"sinopse\": \"Sinopse atualizada...\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/filmes/{movie_id}",
+              "host": ["{{base_url}}"],
+              "path": ["filmes", "{movie_id}"]
+            }
+          }
+        },
+        {
+          "name": "Delete Movie (Admin)",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{base_url}}/filmes/{movie_id}",
+              "host": ["{{base_url}}"],
+              "path": ["filmes", "{movie_id}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "❤️ Favorites",
+      "item": [
+        {
+          "name": "Get User Favorites",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/favoritos",
+              "host": ["{{base_url}}"],
+              "path": ["favoritos"]
+            }
+          }
+        },
+        {
+          "name": "Add Movie to Favorites",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"filmeId\": \"{movie_id}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/favoritos",
+              "host": ["{{base_url}}"],
+              "path": ["favoritos"]
+            }
+          }
+        },
+        {
+          "name": "Remove Movie from Favorites",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{base_url}}/favoritos/{movie_id}",
+              "host": ["{{base_url}}"],
+              "path": ["favoritos", "{movie_id}"]
+            }
+          }
+        },
+        {
+          "name": "Check if Movie is Favorited",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/favoritos/{movie_id}",
+              "host": ["{{base_url}}"],
+              "path": ["favoritos", "{movie_id}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "⭐ Reviews",
+      "item": [
+        {
+          "name": "Get Reviews for Movie",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/avaliacoes/filme/{movie_id}",
+              "host": ["{{base_url}}"],
+              "path": ["avaliacoes", "filme", "{movie_id}"]
+            }
+          }
+        },
+        {
+          "name": "Add Review to Movie",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"filmeId\": \"{movie_id}\",\n  \"nota\": 5,\n  \"comentario\": \"Excelente filme! Recomendo muito.\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/avaliacoes",
+              "host": ["{{base_url}}"],
+              "path": ["avaliacoes"]
+            }
+          }
+        },
+        {
+          "name": "Update User's Review",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nota\": 4,\n  \"comentario\": \"Muito bom, mas poderia ser melhor.\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/avaliacoes/{review_id}",
+              "host": ["{{base_url}}"],
+              "path": ["avaliacoes", "{review_id}"]
+            }
+          }
+        },
+        {
+          "name": "Delete User's Review",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{base_url}}/avaliacoes/{review_id}",
+              "host": ["{{base_url}}"],
+              "path": ["avaliacoes", "{review_id}"]
+            }
+          }
+        },
+        {
+          "name": "Get User's Reviews",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/avaliacoes/usuario",
+              "host": ["{{base_url}}"],
+              "path": ["avaliacoes", "usuario"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "👤 Users",
+      "item": [
+        {
+          "name": "Get Current User Profile",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/usuarios/perfil",
+              "host": ["{{base_url}}"],
+              "path": ["usuarios", "perfil"]
+            }
+          }
+        },
+        {
+          "name": "Update User Profile",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Nome Atualizado\",\n  \"email\": \"novoemail@filmes.com\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/filmes/usuarios/perfil",
+              "host": ["{{base_url}}"],
+              "path": ["usuarios", "perfil"]
+            }
+          }
+        },
+        {
+          "name": "Change Password",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"senhaAtual\": \"admin123\",\n  \"novaSenha\": \"novaSenha123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/usuarios/senha",
+              "host": ["{{base_url}}"],
+              "path": ["usuarios", "senha"]
+            }
+          }
+        },
+        {
+          "name": "Get All Users (Admin)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/usuarios",
+              "host": ["{{base_url}}"],
+              "path": ["usuarios"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "🔄 Complete Workflow",
+      "item": [
+        {
+          "name": "1. Login and Save Token",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@filmes.com\",\n  \"senha\": \"admin123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "login"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    pm.collectionVariables.set('jwt_token', response.token);",
+                  "    console.log('JWT Token saved:', response.token);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "2. Get Movies",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/filmes",
+              "host": ["{{base_url}}"],
+              "path": ["filmes"]
+            }
+          }
+        },
+        {
+          "name": "3. Add to Favorites",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"filmeId\": \"{movie_id}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/favoritos",
+              "host": ["{{base_url}}"],
+              "path": ["favoritos"]
+            }
+          }
+        },
+        {
+          "name": "4. Add Review",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"filmeId\": \"{movie_id}\",\n  \"nota\": 5,\n  \"comentario\": \"Filme incrível! Recomendo muito.\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/avaliacoes",
+              "host": ["{{base_url}}"],
+              "path": ["avaliacoes"]
+            }
+          }
+        },
+        {
+          "name": "5. Get User Favorites",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/favoritos",
+              "host": ["{{base_url}}"],
+              "path": ["favoritos"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+} 
