@@ -60,9 +60,9 @@ Uma aplicação web full-stack para gerenciamento de filmes, avaliações e favo
 
 ### Frontend
 
-1. Navegue até a pasta do frontend:
+1. Navegue até a raiz do projeto, no qual se localiza o frontend do projeto
    ```bash
-   cd frontend
+   cd
    ```
 2. Instale as dependências:
  ```bash
