@@ -69,16 +69,16 @@ Uma aplicação web full-stack para gerenciamento de filmes, avaliações e favo
   npm install
    ```
 3. Execute o projeto:
-   ```bash
-npm run dev
-```
+ ```bash
+  npm run dev
+   ```
 
 ## 📝 Documentação da API
 
 ### Autenticação
 
 #### Registrar Usuário
-```
+
 POST /api/auth/registrar
 Content-Type: application/json
 
