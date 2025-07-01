@@ -65,9 +65,9 @@ Uma aplicação web full-stack para gerenciamento de filmes, avaliações e favo
    cd frontend
    ```
 2. Instale as dependências:
-   ```bash
-npm install
-```
+ ```bash
+  npm install
+   ```
 3. Execute o projeto:
    ```bash
 npm run dev
